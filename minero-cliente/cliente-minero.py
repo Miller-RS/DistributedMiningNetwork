@@ -1,26 +1,35 @@
-import socket # Importa el módulo socket
+import socket
+from Constanst import *
 
-host = "localhost"# Direccion del servidor remoto
-port = 12345 # Puerto del servidor remoto
-user = "Jhon" # Nombre de usuario
+class Client: 
+    def __init__(self, host, port, user):
+        self.host = host # Server IP
+        self.port = port # Server port
+        self.user = user # User name
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-#s = socket.socket() # Crea un objeto socket
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def connect(self):
+        try:
+            self.socket.connect((self.host, self.port)) # Connect to the server
+            print("Connected to server successfully!")
+        except ConnectionRefusedError:
+            print("Connection refused. Please check if the server is running and the host and port are correct.")
+        except Exception as e:
+            print(f"An error occurred while connecting to the server: {e}")
 
+    def send_user(self):
+        self.socket.sendall(self.user.encode())
 
-try:
-    s.connect((host, port))# Conecta el socket al servidor remoto
-    print("Connected to server successfully!")
-   
-except ConnectionRefusedError:
-    print("Connection refused. Please check if the server is running and the host and port are correct.")
-except Exception as e:
-    print(f"An error occurred while connecting to the server: {e}")
+    def receive_data(self):
+        data = self.socket.recv(1024)
+        print(data.decode())
 
-s.sendall(user.encode())# Envia el nombre de usuario al servidor remoto
+    def close(self):
+        self.socket.close()
 
-data = s.recv(1024)# Recibe datos del servidor remoto
-print(data.decode())
-
-s.close() # Cierra la conexión
-
+# Example usage
+client = Client(host, port, user)
+client.connect()
+client.send_user()
+client.receive_data()
+client.close()
