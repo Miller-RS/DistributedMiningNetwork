@@ -1,3 +1,3 @@
-host = "localhost"
-port = 12345
-user = "John"
+HOST = "localhost"
+PORT = 12345
+USER = "John"
