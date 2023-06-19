@@ -35,6 +35,6 @@ class Client:
 # Example usage
 client = Client(HOST, PORT, USER)
 client.connect()
-client.send_user()
 client.receive_data()
+client.send_user()
 client.close()
