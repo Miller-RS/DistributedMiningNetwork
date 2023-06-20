@@ -1,27 +1,23 @@
 import hashlib
 import random
 
-# Define the number of zeros required at the beginning of the hash
-num_zeros = 5
-key = 1
-# Loop until a hash with the required number of zeros is found
-while True:
-    # Generate a random key
-    key2 = str(key)
+class HashFinder:
+    def __init__(self, num_zeros, num_processes, word):
+        self.num_zeros = num_zeros
+        self.num_processes = num_processes
+        self.word = word
 
-    # Concatenate the key and word
-    data = (key2 + "Hello world!").encode()
+    # Define a function to generate random keys and calculate the SHA-256 hash
+    def find_hash(self, start_key, end_key, result_queue):
+            for key in range(start_key, end_key):
+                # Concatenate the key and word
+                data = (str(key) + self.word).encode()
 
-    # Calculate the SHA-256 hash
-    hash_object = hashlib.sha256()
-    hash_object.update(data)
-    hex_digest = hash_object.hexdigest()
-    print(hex_digest)
+                # Calculate the SHA-256 hash
+                hash_object = hashlib.sha256()
+                hash_object.update(data)
+                hex_digest = hash_object.hexdigest()
 
-    # Check if the hash starts with the required number of zeros
-    if hex_digest.startswith("0" * num_zeros):
-        print(f"Found a hash with {num_zeros} zeros at the beginning!")
-        print(f"Key: {key}")
-        print(f"Hash: {hex_digest}")
-        break
-    key = key + 1
+                # Check if the hash starts with the required number of zeros
+                if hex_digest.startswith("0" * self.num_zeros):
+                    result_queue.put((key, hex_digest))
