@@ -1,5 +1,6 @@
 import socket
 from Constanst import *
+from algoritmo_de_minar import HashFinder
 
 
 class Client:
@@ -28,13 +29,7 @@ class Client:
         # print(data.decode('utf-8', 'ignore'))
         print(data.decode('latin-1'))
 
+        return data.decode('latin-1')
+
     def close(self):
         self.socket.close()
-
-
-# Example usage
-client = Client(HOST, PORT, USER)
-client.connect()
-client.send_user()
-client.receive_data()
-client.close()
