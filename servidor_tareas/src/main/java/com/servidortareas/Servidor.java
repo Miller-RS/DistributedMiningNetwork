@@ -25,6 +25,7 @@ public class Servidor {
 
         // Creamos un objeto PrintWriter para enviar datos al cliente
         PrintWriter out = new PrintWriter(new OutputStreamWriter(sc.getOutputStream(), "ISO-8859-1"), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
         // BufferedReader in = new BufferedReader(new
         // InputStreamReader(sc.getInputStream()));
         // String mensajeCliente = in.readLine();
@@ -40,7 +41,10 @@ public class Servidor {
         // for (String word : words) {
         // out.println(word);
         // }
-
+        
+        // Esperamos a que el cliente envie un mensaje
+        String mensajeCliente = in.readLine();
+        System.out.println("Mensaje del cliente: " + mensajeCliente);
         // Cerramos la conexion con el cliente
         sc.close();
       }

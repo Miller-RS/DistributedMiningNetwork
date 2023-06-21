@@ -24,6 +24,9 @@ class Client:
     def send_user(self, msg=USER):
         self.socket.sendall(msg.encode())
 
+    def send_message(self, msg):
+        self.socket.sendall(msg.encode())
+        
     def receive_data(self):
         data = self.socket.recv(1024)
         # print(data.decode('utf-8', 'ignore'))
