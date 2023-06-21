@@ -9,13 +9,13 @@ if __name__ == '__main__':
     # Example usage
     client = Client(HOST, PORT, USER)
     client.connect()
-    client.send_user()
+   # client.send_user()
     data = client.receive_data()
 
     # Call the freeze_support() function
     freeze_support()
 
-    hash_finder = HashFinder(7, 4, data)
+    hash_finder = HashFinder(4, 4, data)
     # Create a queue to store the results
     result_queue = multiprocessing.Queue()
 
@@ -44,5 +44,10 @@ if __name__ == '__main__':
         print(f"Found a hash with {hash_finder.num_zeros} zeros at the beginning!")
         print(f"Key: {key}")
         print(f"Hash: {hex_digest}")
+    
+    print(results)
+    
+    client.send_message(str(results[0][0])+ " " + results[0][1] )
+
 
     client.close()
