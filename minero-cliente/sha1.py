@@ -167,3 +167,4 @@ def sha1(data):
 # print(b[:-1])
 # # data = 'abc'
 # print('sha1-digest:', sha1(b[:-1]))
+# print('sha1-digest:', sha1(data.encode('utf-8')))

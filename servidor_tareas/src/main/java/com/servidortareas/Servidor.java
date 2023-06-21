@@ -41,7 +41,7 @@ public class Servidor {
         // for (String word : words) {
         // out.println(word);
         // }
-        
+
         // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
         System.out.println("Mensaje del cliente: " + mensajeCliente);
