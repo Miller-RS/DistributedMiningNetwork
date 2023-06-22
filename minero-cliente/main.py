@@ -24,7 +24,8 @@ if __name__ == '__main__':
     for i in range(hash_finder.num_processes):
         start_key = i * 1000000
         end_key = (i + 1) * 1000000
-        process = multiprocessing.Process(target=hash_finder.find_hash, args=(start_key, end_key, result_queue))
+        process = multiprocessing.Process(
+            target=hash_finder.find_hash, args=(start_key, end_key, result_queue))
         processes.append(process)
 
     # Start the processes
@@ -35,19 +36,19 @@ if __name__ == '__main__':
     for process in processes:
         process.join()
 
-            # Get the results from the queue
+        # Get the results from the queue
     results = []
     while not result_queue.empty():
         results.append(result_queue.get())
 
     for key, hex_digest in results:
-        print(f"Found a hash with {hash_finder.num_zeros} zeros at the beginning!")
+        print(
+            f"Found a hash with {hash_finder.num_zeros} zeros at the beginning!")
         print(f"Key: {key}")
         print(f"Hash: {hex_digest}")
-    
-    print(results)
-    
-    client.send_message(str(results[0][0])+ " " + results[0][1] )
 
+    print(results)
+
+    client.send_message(str(results[0][0]) + " " + results[0][1])
 
     client.close()
