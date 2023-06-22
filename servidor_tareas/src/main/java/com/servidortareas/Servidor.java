@@ -31,9 +31,45 @@ public class Servidor {
         // String mensajeCliente = in.readLine();
         // System.out.println("Mensaje del cliente: " + mensajeCliente);
 
-        // Enviamos un mensaje al cliente
-        // out.println("¡Conexion exitosa!");
-        words = this.leerArchivo();
+        Thread thread = new Thread(new ManejadorCliente(sc, in, out));
+        thread.start();
+
+        // // Enviamos un mensaje al cliente
+        // // out.println("¡Conexion exitosa!");
+        // words = this.leerArchivo();
+        // System.out.println(words);
+        // // Enviar solo un elemento de words
+        // out.println(words.get(0));
+        // // Enviar todos los elementos de words
+        // // for (String word : words) {
+        // // out.println(word);
+        // // }
+
+        // // Esperamos a que el cliente envie un mensaje
+        // String mensajeCliente = in.readLine();
+        // System.out.println("Mensaje del cliente: " + mensajeCliente);
+        // // Cerramos la conexion con el cliente
+        // sc.close();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  class ManejadorCliente implements Runnable {
+    private Socket sc;
+    private BufferedReader in;
+    private PrintWriter out;
+
+    public ManejadorCliente(Socket sc, BufferedReader in, PrintWriter out) {
+      this.sc = sc;
+      this.in = in;
+      this.out = out;
+    }
+
+    public void run() {
+      try {
+        words = leerArchivo();
         System.out.println(words);
         // Enviar solo un elemento de words
         out.println(words.get(0));
@@ -41,15 +77,16 @@ public class Servidor {
         // for (String word : words) {
         // out.println(word);
         // }
-        
+
         // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
         System.out.println("Mensaje del cliente: " + mensajeCliente);
         // Cerramos la conexion con el cliente
+        out.println("Mensaje recibido");
         sc.close();
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 
