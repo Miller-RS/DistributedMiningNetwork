@@ -1,5 +1,6 @@
 import hashlib
 import random
+# from sha1 import SHAone
 from sha1 import sha1
 
 
@@ -23,7 +24,9 @@ class HashFinder:
             # hex_digest = hash_object.hexdigest()
 
             # Calculate the SHA-1 hash
+            # hex_digest = SHAone().sha1(clean_data)
             hex_digest = sha1(clean_data)
             # Check if the hash starts with the required number of zeros
             if hex_digest.startswith("0" * self.num_zeros):
                 result_queue.put((key, hex_digest))
+                break
