@@ -9,13 +9,18 @@ if __name__ == '__main__':
     # Example usage
     client = Client(HOST, PORT, USER)
     client.connect()
-   # client.send_user()
+    # client.send_user()
     data = client.receive_data()
+
+    # Split the data into: word and num_zeros
+    word, num_zeros = data.split()
+    print(f"Word: {word}")
+    print(f"Number of zeros: {num_zeros}")
 
     # Call the freeze_support() function
     freeze_support()
 
-    hash_finder = HashFinder(4, 4, data)
+    hash_finder = HashFinder(4, 4, word)
     # Create a queue to store the results
     result_queue = multiprocessing.Queue()
 

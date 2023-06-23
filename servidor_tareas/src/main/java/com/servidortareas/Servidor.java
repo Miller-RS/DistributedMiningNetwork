@@ -10,8 +10,13 @@ public class Servidor {
   String path = VariablesConexion.PATH;
   String ip = VariablesConexion.IP;
   int puerto = VariablesConexion.PORT;
+  int number_zeros = VariablesConexion.N_ZEROS;
   // Create list of strings
   List<String> words = new ArrayList<String>();
+  // // Create list of longs
+  // List<Long> times = new ArrayList<Long>();
+  // Create list of doubles
+  List<Double> timesInSec = new ArrayList<Double>();
 
   public void iniciarServidor() {
     try {
@@ -35,8 +40,11 @@ public class Servidor {
         // out.println("¡Conexion exitosa!");
         words = this.leerArchivo();
         System.out.println(words);
+        // Calculamos el tiempo de inicio del hallazgo de los ceros en el hash
+        long startTime = System.nanoTime();
+
         // Enviar solo un elemento de words
-        out.println(words.get(0));
+        out.println(words.get(0) + " " + number_zeros);
         // Enviar todos los elementos de words
         // for (String word : words) {
         // out.println(word);
@@ -44,7 +52,14 @@ public class Servidor {
 
         // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
+        // Calculamos el tiempo de finalizacion del hallazgo de los ceros en el hash
+        long estimatedTime = System.nanoTime() - startTime;
+        double estimatedTimeInSec = (double) estimatedTime / 1_000_000_000;
+        timesInSec.add(estimatedTimeInSec);
+        System.out.println(words.get(0) + " " + number_zeros);
+
         System.out.println("Mensaje del cliente: " + mensajeCliente);
+        System.out.println("Tiempo de demora en encontrar el primer key: " + estimatedTimeInSec + "s");
         // Cerramos la conexion con el cliente
         sc.close();
       }
