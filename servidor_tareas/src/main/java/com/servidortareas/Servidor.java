@@ -5,24 +5,33 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Servidor {
   String path = VariablesConexion.PATH;
   String ip = VariablesConexion.IP;
   int puerto = VariablesConexion.PORT;
+  ManejadorCliente sendlis[] = new ManejadorCliente[VariablesConexion.MAX_CONNECTIONS];
+
+  BlockingQueue<String> responseQueue = new LinkedBlockingQueue<String>();
+  
   int number_zeros = VariablesConexion.N_ZEROS;
   // Create list of strings
   List<String> words = new ArrayList<String>();
-  // // Create list of longs
-  // List<Long> times = new ArrayList<Long>();
-  // Create list of doubles
+
   List<Double> timesInSec = new ArrayList<Double>();
+  Thread ThreadHandler[] = new Thread[VariablesConexion.MAX_CONNECTIONS];
 
   public void iniciarServidor() {
     try {
       ServerSocket ss = new ServerSocket(puerto);
       System.out.println("Iniciando el servidor en el Puerto: " + puerto + "...");
 
+      Thread responseThread = new Thread(new ResponseHandler(responseQueue));
+      responseThread.start();
+
+      int i = 0;
       while (true) {
         // Esperamos a que un cliente se conecte
         Socket sc = ss.accept(); // Acepta la conexion entrante
@@ -31,27 +40,48 @@ public class Servidor {
         // Creamos un objeto PrintWriter para enviar datos al cliente
         PrintWriter out = new PrintWriter(new OutputStreamWriter(sc.getOutputStream(), "ISO-8859-1"), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-        // BufferedReader in = new BufferedReader(new
-        // InputStreamReader(sc.getInputStream()));
-        // String mensajeCliente = in.readLine();
-        // System.out.println("Mensaje del cliente: " + mensajeCliente);
 
-        // Enviamos un mensaje al cliente
-        // out.println("¡Conexion exitosa!");
-        words = this.leerArchivo();
+        sendlis[i] = new ManejadorCliente(sc, in, out, responseQueue);
+        Thread thread = new Thread(sendlis[i]);
+        //ThreadHandler[i] = thread;
+        thread.start();
+        i++;
+
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  class ManejadorCliente implements Runnable {
+    private Socket sc;
+    private BufferedReader in;
+    private PrintWriter out;
+    private BlockingQueue<String> responseQueue;
+
+    public ManejadorCliente(Socket sc, BufferedReader in, PrintWriter out, BlockingQueue<String> responseQueue) {
+      this.sc = sc;
+      this.in = in;
+      this.out = out;
+      this.responseQueue = responseQueue;
+    }
+
+    public void run() {
+      try {
+        words = leerArchivo();
         System.out.println(words);
         // Calculamos el tiempo de inicio del hallazgo de los ceros en el hash
         long startTime = System.nanoTime();
 
         // Enviar solo un elemento de words
         out.println(words.get(0) + " " + number_zeros);
-        // Enviar todos los elementos de words
-        // for (String word : words) {
-        // out.println(word);
-        // }
-
-        // Esperamos a que el cliente envie un mensaje
+      
+        // // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
+        
+        responseQueue.put(mensajeCliente);// Add to queue
+        
+       
         // Calculamos el tiempo de finalizacion del hallazgo de los ceros en el hash
         long estimatedTime = System.nanoTime() - startTime;
         double estimatedTimeInSec = (double) estimatedTime / 1_000_000_000;
@@ -61,10 +91,55 @@ public class Servidor {
         System.out.println("Mensaje del cliente: " + mensajeCliente);
         System.out.println("Tiempo de demora en encontrar el primer key: " + estimatedTimeInSec + "s");
         // Cerramos la conexion con el cliente
-        sc.close();
+      } catch (Exception e) {
+        e.printStackTrace();
       }
-    } catch (Exception e) {
-      e.printStackTrace();
+    }
+  }
+
+  class ResponseHandler implements Runnable {
+    private BlockingQueue<String> responseQueue;
+
+    public ResponseHandler(BlockingQueue<String> responseQueue) {
+      this.responseQueue = responseQueue;
+    }
+
+    public void run(){
+      try {
+        int contador_paraConfirmar = 0;
+        while(true) {
+
+          if(responseQueue.size() == VariablesConexion.MAX_CONNECTIONS){
+          
+            String response = responseQueue.take();
+            System.out.println("tamano despues de take"+responseQueue.size());
+
+            System.out.println("Respuesta del cliente atravez de la cola: " + response);
+
+            for(ManejadorCliente sendli : sendlis){
+              sendli.out.println(response);
+            }
+
+            for(ManejadorCliente sendli : sendlis){
+               String respuesta_para_confirmar =sendli.in.readLine();
+
+                if(respuesta_para_confirmar.equals("OK")){
+                  contador_paraConfirmar++;
+                }
+                
+            }
+            if(contador_paraConfirmar == VariablesConexion.MAX_CONNECTIONS){
+                System.out.println("Se ha verificado por los mineros el key"  + " " + response);
+                break;
+            }
+              
+           }
+
+
+        }
+      } catch (Exception e){
+        e.printStackTrace();
+      }
     }
   }
 
