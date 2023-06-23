@@ -65,7 +65,7 @@ def _process_chunk(chunk, h0, h1, h2, h3, h4):
     return h0, h1, h2, h3, h4
 
 
-class Sha1Hash(object):
+class SHAone(object):
     """A class that mimics that hashlib api and implements the SHA-1 algorithm."""
 
     name = 'python-sha1'
@@ -155,8 +155,16 @@ def sha1(data):
     Returns:
         A hex SHA-1 digest of the input message.
     """
-    return Sha1Hash().update(data).hexdigest()
+    return SHAone().update(data).hexdigest()
 
+
+# Ejemplo de uso
+# data = b"Hello, world!"
+# data = b"1MARIA931,2666368"
+
+# sha = SHAone()
+# result = sha.sha1(data)
+# print(result)
 
 # sys.stdout.write("Dame una palabra:")
 # sys.stdout.flush()

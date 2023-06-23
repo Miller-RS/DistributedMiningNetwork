@@ -16,11 +16,12 @@ if __name__ == '__main__':
     word, num_zeros = data.split()
     print(f"Word: {word}")
     print(f"Number of zeros: {num_zeros}")
+    # print(type(num_zeros))
 
     # Call the freeze_support() function
     freeze_support()
 
-    hash_finder = HashFinder(4, 4, word)
+    hash_finder = HashFinder(int(num_zeros), 4, word)
     # Create a queue to store the results
     result_queue = multiprocessing.Queue()
 
