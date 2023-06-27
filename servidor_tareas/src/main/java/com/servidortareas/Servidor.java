@@ -15,7 +15,7 @@ public class Servidor {
   ManejadorCliente sendlis[] = new ManejadorCliente[VariablesConexion.MAX_CONNECTIONS];
 
   BlockingQueue<String> responseQueue = new LinkedBlockingQueue<String>();
-  
+
   int number_zeros = VariablesConexion.N_ZEROS;
   // Create list of strings
   List<String> words = new ArrayList<String>();
@@ -43,7 +43,7 @@ public class Servidor {
 
         sendlis[i] = new ManejadorCliente(sc, in, out, responseQueue);
         Thread thread = new Thread(sendlis[i]);
-        //ThreadHandler[i] = thread;
+        // ThreadHandler[i] = thread;
         thread.start();
         i++;
 
@@ -75,13 +75,12 @@ public class Servidor {
 
         // Enviar solo un elemento de words
         out.println(words.get(0) + " " + number_zeros);
-      
+
         // // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
-        
+        System.out.println("Mensaje del cliente: " + mensajeCliente);
         responseQueue.put(mensajeCliente);// Add to queue
-        
-       
+
         // Calculamos el tiempo de finalizacion del hallazgo de los ceros en el hash
         long estimatedTime = System.nanoTime() - startTime;
         double estimatedTimeInSec = (double) estimatedTime / 1_000_000_000;
@@ -104,40 +103,39 @@ public class Servidor {
       this.responseQueue = responseQueue;
     }
 
-    public void run(){
+    public void run() {
       try {
         int contador_paraConfirmar = 0;
-        while(true) {
+        while (true) {
 
-          if(responseQueue.size() == VariablesConexion.MAX_CONNECTIONS){
-          
+          if (responseQueue.size() == VariablesConexion.MAX_CONNECTIONS) {
+
             String response = responseQueue.take();
-            System.out.println("tamano despues de take"+responseQueue.size());
+            System.out.println("tamano despues de take" + responseQueue.size());
 
             System.out.println("Respuesta del cliente atravez de la cola: " + response);
 
-            for(ManejadorCliente sendli : sendlis){
+            for (ManejadorCliente sendli : sendlis) {
               sendli.out.println(response);
             }
 
-            for(ManejadorCliente sendli : sendlis){
-               String respuesta_para_confirmar =sendli.in.readLine();
+            for (ManejadorCliente sendli : sendlis) {
+              String respuesta_para_confirmar = sendli.in.readLine();
 
-                if(respuesta_para_confirmar.equals("OK")){
-                  contador_paraConfirmar++;
-                }
-                
-            }
-            if(contador_paraConfirmar == VariablesConexion.MAX_CONNECTIONS){
-                System.out.println("Se ha verificado por los mineros el key"  + " " + response);
-                break;
-            }
-              
-           }
+              if (respuesta_para_confirmar.equals("OK")) {
+                contador_paraConfirmar++;
+              }
 
+            }
+            if (contador_paraConfirmar == VariablesConexion.MAX_CONNECTIONS) {
+              System.out.println("Se ha verificado por los mineros el key" + " " + response);
+              break;
+            }
+
+          }
 
         }
-      } catch (Exception e){
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }
