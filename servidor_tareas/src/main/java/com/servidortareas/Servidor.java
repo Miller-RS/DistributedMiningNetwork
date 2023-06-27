@@ -41,10 +41,14 @@ public class Servidor {
         PrintWriter out = new PrintWriter(new OutputStreamWriter(sc.getOutputStream(), "ISO-8859-1"), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
 
+        System.out.println("bandera 1");
         sendlis[i] = new ManejadorCliente(sc, in, out, responseQueue);
+        System.out.println("bandera 2");
         Thread thread = new Thread(sendlis[i]);
+        System.out.println("bandera 3");
         // ThreadHandler[i] = thread;
         thread.start();
+        System.out.println("bandera 4");
         i++;
 
       }
@@ -68,17 +72,21 @@ public class Servidor {
 
     public void run() {
       try {
+        System.out.println("bandera 5");
         words = leerArchivo();
         System.out.println(words);
         // Calculamos el tiempo de inicio del hallazgo de los ceros en el hash
         long startTime = System.nanoTime();
+        System.out.println("bandera 6");
 
         // Enviar solo un elemento de words
         out.println(words.get(0) + " " + number_zeros);
 
         // // Esperamos a que el cliente envie un mensaje
         String mensajeCliente = in.readLine();
+         System.out.println("bandera 8");
         System.out.println("Mensaje del cliente: " + mensajeCliente);
+        System.out.println("bandera 7");
         responseQueue.put(mensajeCliente);// Add to queue
 
         // Calculamos el tiempo de finalizacion del hallazgo de los ceros en el hash
