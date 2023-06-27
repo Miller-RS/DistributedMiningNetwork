@@ -24,15 +24,15 @@ class Client:
     def send_user(self, msg=USER):
         self.socket.sendall(msg.encode())
 
-    def send_message(self, msg):
-        self.socket.sendall(msg.encode())
+    def send_message(self, message):
+        message += '\n'  # Add a newline character to the end of the message
+        message_bytes = message.encode('utf-8')
+        self.socket.sendall(message_bytes)
         
     def receive_data(self):
         data = self.socket.recv(1024)
-        # print(data.decode('utf-8', 'ignore'))
-        print(data.decode('latin-1'))
-
-        return data.decode('latin-1')
-
+       
+        return data.decode('utf-8')
+    
     def close(self):
         self.socket.close()
